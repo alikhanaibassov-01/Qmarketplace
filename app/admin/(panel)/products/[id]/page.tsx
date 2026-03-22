@@ -52,6 +52,7 @@ export default async function EditProductPage({ params }: Props) {
             rating: product.rating,
             reviewsSummary: product.reviewsSummary ?? "",
             category: product.category ?? "",
+            imageUrl: product.imageUrl ?? "",
             attributePairs,
           }}
         />

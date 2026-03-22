@@ -11,6 +11,7 @@ model Product {
   id             String   @id @default(cuid())
   name           String
   sku            String   @unique
+  imageUrl       String?
   weightGrams    Int
   reviewCount    Int      @default(0)
   rating         Float

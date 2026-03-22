@@ -56,9 +56,11 @@ export async function createProduct(
 
   let product;
   try {
+    const imageUrl = String(formData.get("imageUrl") ?? "").trim() || null;
     product = await prisma.product.create({
       data: {
         ...rest,
+        imageUrl,
         reviewsSummary: rest.reviewsSummary?.trim() || null,
         category: rest.category?.trim() || null,
         attributes,
@@ -91,10 +93,12 @@ export async function updateProduct(
   const attributes = pairsToAttributes(attributePairs);
 
   try {
+    const imageUrl = String(formData.get("imageUrl") ?? "").trim() || null;
     await prisma.product.update({
       where: { id },
       data: {
         ...rest,
+        imageUrl,
         reviewsSummary: rest.reviewsSummary?.trim() || null,
         category: rest.category?.trim() || null,
         attributes,

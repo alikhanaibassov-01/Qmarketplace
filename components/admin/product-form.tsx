@@ -13,6 +13,7 @@ export type ProductFormInitial = {
   rating: number;
   reviewsSummary: string;
   category: string;
+  imageUrl: string;
   attributePairs: Pair[];
 };
 
@@ -28,6 +29,26 @@ export function ProductForm(props: Props) {
         : [{ key: "", value: "" }]
       : [{ key: "", value: "" }]
   );
+
+  const [imageUrl, setImageUrl] = useState(
+    props.mode === "edit" ? props.initial.imageUrl : ""
+  );
+  const [uploading, setUploading] = useState(false);
+
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body });
+      const data = await res.json();
+      if (data.url) setImageUrl(data.url);
+    } finally {
+      setUploading(false);
+    }
+  }
 
   const productId = props.mode === "edit" ? props.productId : null;
   const formAction = useMemo(() => {
@@ -58,6 +79,46 @@ export function ProductForm(props: Props) {
           {state.error}
         </p>
       ) : null}
+
+      <input type="hidden" name="imageUrl" value={imageUrl} />
+
+      <section className="space-y-4">
+        <h2 className="text-sm font-medium text-neutral-500">Фото товара</h2>
+        <div className="flex items-start gap-6">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt="Превью"
+              className="h-32 w-32 rounded-2xl border border-neutral-200 object-cover"
+            />
+          ) : (
+            <div className="flex h-32 w-32 items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 text-xs text-neutral-400">
+              Нет фото
+            </div>
+          )}
+          <div className="flex flex-col gap-2">
+            <label className="cursor-pointer rounded-full border border-neutral-200 px-4 py-2.5 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50">
+              {uploading ? "Загрузка…" : "Выбрать файл"}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                disabled={uploading}
+                className="hidden"
+              />
+            </label>
+            {imageUrl ? (
+              <button
+                type="button"
+                onClick={() => setImageUrl("")}
+                className="text-left text-xs text-neutral-500 underline-offset-4 hover:underline"
+              >
+                Удалить фото
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </section>
 
       <section className="space-y-4">
         <h2 className="text-sm font-medium text-neutral-500">Основное</h2>

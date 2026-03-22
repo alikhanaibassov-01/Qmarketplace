@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
@@ -26,6 +27,18 @@ export default async function ProductPage({ params }: Props) {
       </header>
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
+        {product.imageUrl ? (
+          <div className="relative mb-10 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-neutral-100">
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 768px"
+              priority
+            />
+          </div>
+        ) : null}
         {product.category?.trim() ? (
           <p className="text-xs font-medium uppercase tracking-widest text-neutral-400">{product.category}</p>
         ) : null}
